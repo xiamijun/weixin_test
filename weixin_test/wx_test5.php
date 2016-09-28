@@ -25,8 +25,6 @@ class wechatCallbackapiTest
 			$fromUsername = $postObj->FromUserName;
 			$toUsername = $postObj->ToUserName;
 			$msgType=$postObj->Msgtype;
-			$event=$postObj->Event;
-			$keyword = trim($postObj->Content);
 			$time = time();
 
 			switch($msgType){
