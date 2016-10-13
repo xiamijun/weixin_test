@@ -26,7 +26,7 @@ class wechatCallbackapiTest
 			$postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
 			$fromUsername = $postObj->FromUserName;
 			$toUsername = $postObj->ToUserName;
-			$msgType=$postObj->Msgtype;
+			$type=$postObj->Msgtype;
 			$event=$postObj->Event;
 			$time = time();
 			$textTpl = "<xml>
@@ -37,33 +37,19 @@ class wechatCallbackapiTest
 						<Content><![CDATA[%s]]></Content>
 						<FuncFlag>0</FuncFlag>
 						</xml>";
-			switch($msgType){
+			switch($type){
 				case 'event':
 					if($event=='subscribe'){
 						$contentStr='感谢你的关注，回复1，2，3';
 					}
 				break;
-				case 'text':
-					$location_X=$postObj->Location_X;
-					$location_Y=$postObj->Location_Y;
-
-					$weatherurl="http://api.map.baidu.com/telematics/v3/weather?location={$location_Y},{$location_X}&ak=wEr4lhGVDKf8m41ZQbZSI9SEprXFlqBO";
-					$apistr3=file_get_contents($weatherurl);
-					$apiobj3=simplexml_load_string($apistr3);
-					$placeobj=$apiobj3->results->currentcity;
-					$todayobj=$apiobj3->results->weather_data->date[0];
-					$weatherobj=$apiobj3->results->weather_data->weather[0];
-					$windobj=$apiobj3->results->weather_data->wind[0];
-					$temobj=$apiobj3->results->weather_data->temperature[0];
-					$contentStr="{$placeobj}{$todayobj}天气{$weatherobj}，风力{$windobj}，温度{$temobj}";
-					break;
 				case 'image':
 					$picurl=$postObj->PicUrl;
-					$contentStr='你发送的是图片，地址：'.$picurl;
+					$contentStr="你发送的是图片，地址：{$picurl}";
 					break;
 				case 'voice':
 					$recognition=$postObj->Recognition;
-					$contentStr='你发送的是语音，内容：'.$recognition;
+					$contentStr="你发送的是语音，内容：{$recognition}";
 					break;
 				case 'video':
 					$contentStr='你发送的是视频';
@@ -95,7 +81,7 @@ class wechatCallbackapiTest
 					break;
 				case 'link':
 					$title=$postObj->Title;
-					$contentStr='你发送的是链接，标题：'.$title;
+					$contentStr="你发送的是链接，标题：{$title}";
 					break;
 			}
 			$msgType='text';

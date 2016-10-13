@@ -25,10 +25,10 @@ class wechatCallbackapiTest
 			$postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
 			$fromUsername = $postObj->FromUserName;
 			$toUsername = $postObj->ToUserName;
-			$msgType=$postObj->Msgtype;
+			$type=$postObj->Msgtype;
 			$time = time();
 
-			switch($msgType){
+			switch($type){
 
 				case 'location':
 					$location_X=$postObj->Location_X;

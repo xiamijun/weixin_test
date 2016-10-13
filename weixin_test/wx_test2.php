@@ -55,36 +55,52 @@ class wechatCallbackapiTest
 					default:
 						$contentStr='你发送的是文本消息'.$keyword;
 				}
+				$msgType='text';
+				$resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
+				echo $resultStr;
 			}
 
 			if($type=='image'){
 				$picurl=strval($postObj->PicUrl);
 				$contentStr="你发送的是图片，地址：".$picurl;
+				$msgType='text';
+				$resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
+				echo $resultStr;
 			}
 
 			if($type=='location'){
 				$location_X=strval($postObj->Location_X);
 				$location_Y=strval($postObj->Location_Y);
 				$contentStr='你发送的是位置,纬度：'.$location_X.'经度：'.$location_Y;
+				$msgType='text';
+				$resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
+				echo $resultStr;
 			}
 
 			if($type=='voice'){
 				$recognition=strval($postObj->Recognition);
 				$contentStr='你发送的是语音，内容：'.$recognition;
+				$msgType='text';
+				$resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
+				echo $resultStr;
 			}
 
 			if($type=='video'){
 				$contentStr='你发送的是视频';
+				$msgType='text';
+				$resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
+				echo $resultStr;
 			}
 
 			if($type=='link'){
 				$title=strval($postObj->Title);
 				$contentStr='你发送的是链接，标题：'.$title;
-			}
-
-			$msgType='text';
+				$msgType='text';
 				$resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
 				echo $resultStr;
+			}
+
+
 
 
         }else {
