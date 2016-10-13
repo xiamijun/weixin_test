@@ -25,7 +25,7 @@ class wechatCallbackapiTest
 			$postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
 			$fromUsername = $postObj->FromUserName;
 			$toUsername = $postObj->ToUserName;
-			$msgType=$postObj->Msgtype;
+			$type=$postObj->Msgtype;
 			$event=$postObj->Event;
 			$keyword = trim($postObj->Content);
 			$time = time();
@@ -37,49 +37,51 @@ class wechatCallbackapiTest
 						<Content><![CDATA[%s]]></Content>
 						<FuncFlag>0</FuncFlag>
 						</xml>";
-			switch($msgType){
-				case 'event':
-					if($event=='subscribe'){
-						$contentStr='感谢你的关注，回复1，2，3';
-					}
-				break;
-				case 'text':
-					switch($keyword){
-						case '1':
-							$contentStr="关键词为1";
-							break;
-						case '2':
-							$contentStr='关键词为2';
-							break;
-						case '3':
-							$contentStr='关键词为2';
-							break;
-						default:
-							$content=$postObj->Content;
-							$contentStr='你发送的是文本消息'.$content;
-					}
-					break;
-				case 'image':
-					$picurl=$postObj->PicUrl;
-					$contentStr='你发送的是图片，地址：'.$picurl;
-					break;
-				case 'voice':
-					$recognition=$postObj->Recognition;
-					$contentStr='你发送的是语音，内容：'.$recognition;
-					break;
-				case 'video':
-					$contentStr='你发送的是视频';
-					break;
-				case 'location':
-					$location_X=$postObj->Location_X;
-					$location_Y=$postObj->Location_Y;
-					$contentStr='你发送的是位置,纬度：'.$location_X.'经度：'.$location_Y;
-					break;
-				case 'link':
-					$title=$postObj->Title;
-					$contentStr='你发送的是链接，标题：'.$title;
-					break;
+			if($type=='event'&&$event=='subscribe'){
+				$contentStr='感谢你的关注，回复1，2，3';
 			}
+
+			if(!empty($keyword)){
+				switch($keyword){
+					case '1':
+						$contentStr="关键词为1";
+						break;
+					case '2':
+						$contentStr='关键词为2';
+						break;
+					case '3':
+						$contentStr='关键词为3';
+						break;
+					default:
+						$contentStr='你发送的是文本消息'.$keyword;
+				}
+			}
+
+			if($type=='image'){
+				$picurl=strval($postObj->PicUrl);
+				$contentStr="你发送的是图片，地址：".$picurl;
+			}
+
+			if($type=='location'){
+				$location_X=strval($postObj->Location_X);
+				$location_Y=strval($postObj->Location_Y);
+				$contentStr='你发送的是位置,纬度：'.$location_X.'经度：'.$location_Y;
+			}
+
+			if($type=='voice'){
+				$recognition=strval($postObj->Recognition);
+				$contentStr='你发送的是语音，内容：'.$recognition;
+			}
+
+			if($type=='video'){
+				$contentStr='你发送的是视频';
+			}
+
+			if($type=='link'){
+				$title=strval($postObj->Title);
+				$contentStr='你发送的是链接，标题：'.$title;
+			}
+
 			$msgType='text';
 				$resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
 				echo $resultStr;
@@ -104,19 +106,13 @@ class wechatCallbackapiTest
 
 	private function checkSignature()
 	{
-		// you must define TOKEN by yourself
-		if (!defined("TOKEN")) {
-			throw new Exception('TOKEN is not defined!');
-		}
-
 		$signature = $_GET["signature"];
 		$timestamp = $_GET["timestamp"];
 		$nonce = $_GET["nonce"];
 
 		$token = TOKEN;
 		$tmpArr = array($token, $timestamp, $nonce);
-		// use SORT_STRING rule
-		sort($tmpArr, SORT_STRING);
+		sort($tmpArr);
 		$tmpStr = implode( $tmpArr );
 		$tmpStr = sha1( $tmpStr );
 
